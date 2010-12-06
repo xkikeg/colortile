@@ -13,18 +13,45 @@ RD = 8 # ReD
 PK = 9 # PinK
 MG = 10 # MaGenta
 
+COLOR_MAX = MG
+
+COLOR_TO_CHAR = {
+    BG: "-",
+    GY: "g",
+    BL: "B",
+    CY: "c",
+    GR: "G",
+    YL: "y",
+    BR: "b",
+    OG: "o",
+    RD: "R",
+    PK: "p",
+    MG: "m"
+    }
+
+COLOR_TO_STR = {
+    BG: "BG",
+    GY: "GY",
+    BL: "BL",
+    CY: "CY",
+    GR: "GR",
+    YL: "YL",
+    BR: "BR",
+    OG: "OG",
+    RD: "RD",
+    PK: "PK",
+    MG: "MG"
+    }
+
+
+def char_tilecolor(color):
+    if color in COLOR_TO_CHAR:
+        return COLOR_TO_CHAR[color]
+    else: return "#"
+
 def str_tilecolor(color):
-    if color == BG: return "-"
-    elif color == GY: return "g"
-    elif color == BL: return "B"
-    elif color == CY: return "c"
-    elif color == GR: return "G"
-    elif color == YL: return "y"
-    elif color == BR: return "b"
-    elif color == OG: return "o"
-    elif color == RD: return "R"
-    elif color == PK: return "p"
-    elif color == MG: return "m"
+    if color in COLOR_TO_STR:
+        return COLOR_TO_STR[color]
     else: return "#"
 
 def get_tilecolor(r, g, b):
@@ -56,9 +83,11 @@ def get_tilecolor(r, g, b):
     else:
         return -1
 
+
 class ColorTileArray(object):
     def __init__(self):
         self.array = []
+
     def fixed_image_loader(self, filename):
         array = []
         im = Image.open(filename)
@@ -70,23 +99,28 @@ class ColorTileArray(object):
                 row.append(tile_color)
             array.append(row)
         self.array = array
+
     def __str__(self):
-        return "\n".join((" ".join(str_tilecolor(j) for j in i) for i in self.array))
-    def count(self):
-        array = reduce(lambda a,b: a+b, self.array)
-        print "GY: %d" % (sum(filter(lambda x: x == GY, array))/GY)
-        print "BL: %d" % (sum(filter(lambda x: x == BL, array))/BL)
-        print "CY: %d" % (sum(filter(lambda x: x == CY, array))/CY)
-        print "GR: %d" % (sum(filter(lambda x: x == GR, array))/GR)
-        print "YL: %d" % (sum(filter(lambda x: x == YL, array))/YL)
-        print "BR: %d" % (sum(filter(lambda x: x == BR, array))/BR)
-        print "OG: %d" % (sum(filter(lambda x: x == OG, array))/OG)
-        print "RD: %d" % (sum(filter(lambda x: x == RD, array))/RD)
-        print "PK: %d" % (sum(filter(lambda x: x == PK, array))/PK)
-        print "MG: %d" % (sum(filter(lambda x: x == MG, array))/MG)
+        return "\n".join((" ".join(char_tilecolor(j) for j in i) for i in self.array))
+
+    def count(self, color):
+        return sum(filter(lambda x: x == color,
+                          reduce(lambda a,b: a+b, self.array)))
+
+    def count_all(self):
+        result = [0 for i in range(0, COLOR_MAX+1)]
+        for i in self.array:
+            for j in i:
+                result[j] += 1
+        return result
+
+    def str_count_all(self):
+        result = self.count_all()
+        return "\n".join("%s: %d" % (str_tilecolor(i), result[i]) for i in range(0, len(result)))
+
 
 if __name__=="__main__":
     x = ColorTileArray()
     x.fixed_image_loader(sys.argv[1])
     print x
-    x.count()
+    print x.str_count_all()
