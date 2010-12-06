@@ -19,17 +19,27 @@
 石の色のカラーコードです。明るい方はやや怪しいです。
 <table>
 <tr><th>Color     </th><th>Dark</th>   <th>Light  </th></tr>
-<tr><td>Background</td><td>#EDEDED</td><td>#F7F7F7</td></tr>
-<tr><td>Gray</td>      <td>#BBBBBB</td><td>#D6D6D6</td></tr>
-<tr><td>Blue</td>      <td>#0066FF</td><td>#5C9DFF</td></tr>
-<tr><td>Cyan</td>      <td>#66CCCC</td><td>#9DDFDF</td></tr>
-<tr><td>Green</td>     <td>#00CC00</td><td>#63E063</td></tr>
-<tr><td>Yellow</td>    <td>#CCCC66</td><td>#DFDFA0</td></tr>
-<tr><td>Brown</td>     <td>#CC6600</td><td>#E0A366</td></tr>
-<tr><td>Orange</td>    <td>#FF9900</td><td>#FFC260</td></tr>
-<tr><td>Pink</td>      <td>#FF6666</td><td>#FFA3A3</td></tr>
-<tr><td>Magenta</td>   <td>#CC66CC</td><td>#E0A3E0</td></tr>
+<tr><td>Background</td><td><code>#EDEDED</code></td><td><code>#F7F7F7</code></td></tr>
+<tr><td>Gray</td>      <td><code>#BBBBBB</code></td><td><code>#D6D6D6</code></td></tr>
+<tr><td>Blue</td>      <td><code>#0066FF</code></td><td><code>#5C9DFF</code></td></tr>
+<tr><td>Cyan</td>      <td><code>#66CCCC</code></td><td><code>#9DDFDF</code></td></tr>
+<tr><td>Green</td>     <td><code>#00CC00</code></td><td><code>#63E063</code></td></tr>
+<tr><td>Yellow</td>    <td><code>#CCCC66</code></td><td><code>#DFDFA0</code></td></tr>
+<tr><td>Brown</td>     <td><code>#CC6600</code></td><td><code>#E0A366</code></td></tr>
+<tr><td>Orange</td>    <td><code>#FF9900</code></td><td><code>#FFC260</code></td></tr>
+<tr><td>Pink</td>      <td><code>#FF6666</code></td><td><code>#FFA3A3</code></td></tr>
+<tr><td>Magenta</td>   <td><code>#CC66CC</code></td><td><code>#E0A3E0</code></td></tr>
 </table>
 
 ### 色の判別
-暫定的に色の判別方法を決定する
+暫定的に色の判別方法を決定する。色のRGB値をそれぞれR,G,Bで表現する。
+
+1. R=G=B なら`#E0E0E0`以下か以上かで*gray*か*empty*かを判定する。
+2. R<G<B なら*blue*
+3. R<G=B なら*cyan*
+4. B=R<G なら*green*
+5. B<R=G なら*yellow*
+6. R>G>B ならRが`0xff`のときは*orange*で、それ以外は*brown*と判定。
+   あるいは、Gが`0xbb`以上なら*orange*で、それ以外は*brown*とか。
+7. R>G=B なら*pink*
+8. G<B=R なら*magenta*
