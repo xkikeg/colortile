@@ -1,5 +1,7 @@
-import Image
 import sys
+from array import array as Array
+
+import Image
 
 WL = -1 # Wall
 BG = 0 # BackGround
@@ -92,13 +94,13 @@ def is_tile(color):
 
 class ColorTileArray(object):
     def __init__(self):
-        self.array = []
+        self.array = None
 
     def fixed_image_loader(self, filename):
         array = []
         im = Image.open(filename)
         for i in range(0,im.size[1]/25):
-            row = []
+            row = Array('b')
             for j in range(0,im.size[0]/25):
                 r, g, b = im.getpixel((j*25+12, i*25+12))[:3]
                 tile_color = get_tilecolor(r, g, b)
