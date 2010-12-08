@@ -1,7 +1,9 @@
 import sys
-from array import array as Array
+import array
 
 import Image
+
+CELL_SIZE = 25
 
 WL = -1 # Wall
 BG = 0 # BackGround
@@ -94,31 +96,39 @@ def is_tile(color):
 
 class ColorTileArray(object):
     def __init__(self):
-        self.array = None
+        self.tile_array = None
 
     def fixed_image_loader(self, filename):
-        array = []
+        tile_array = array.array('b')
         im = Image.open(filename)
-        for i in range(0,im.size[1]/25):
-            row = Array('b')
-            for j in range(0,im.size[0]/25):
+        self.height = im.size[1] / CELL_SIZE
+        self.width = im.size[0] / CELL_SIZE
+        for i in range(0, self.height):
+            for j in range(0, self.width):
                 r, g, b = im.getpixel((j*25+12, i*25+12))[:3]
                 tile_color = get_tilecolor(r, g, b)
-                row.append(tile_color)
-            array.append(row)
-        self.array = array
+                tile_array.append(tile_color)
+        self.tile_array = tile_array
 
     def __str__(self):
-        return "\n".join((" ".join(char_tilecolor(j) for j in i) for i in self.array))
+        return "\n".join((" ".join(char_tilecolor(self.at(i, j)) for j in range(0, self.width))) for i in range(0, self.height))
+
+    def index_to_pos(self, index):
+        return (index / self.width, index % self.width)
+
+    def at(self, x, y):
+        return self.tile_array[x * self.width + y]
+
+    def assign(self, x, y, color):
+        self.tile_array[x * self.width + y] = color
 
     def count(self, color):
-        return reduce(lambda a,b: a+b, self.array).count(color)
+        return self.tile_array.count(color)
 
     def count_all(self):
         result = [0 for i in range(0, COLOR_MAX+1)]
-        for i in self.array:
-            for j in i:
-                result[j] += 1
+        for i in self.tile_array:
+            result[i] += 1
         return result
 
     def str_count_all(self):
@@ -127,9 +137,8 @@ class ColorTileArray(object):
 
     def position_all(self):
         result = [[] for i in range(0, COLOR_MAX+1)]
-        for i, row in enumerate(self.array):
-            for j, cell in enumerate(row):
-                result[cell].append((i, j))
+        for index, cell in enumerate(self.tile_array):
+            result[cell].append(self.index_to_pos(index))
         return result
 
 
@@ -148,7 +157,7 @@ class ColorTileArray(object):
         return True
 
     def is_solved(self):
-        return len(reduce(lambda a,b: a+b, self.array)) == self.count(BG)
+        return len(self.tile_array) == self.count(BG)
 
     def get_neighbor(self, iter):
         for i,color in enumerate(iter):
@@ -157,11 +166,11 @@ class ColorTileArray(object):
 
     def legal_moves(self):
         moves = []
-        for i in range(0, len(self.array)):
-            for j in range(0, len(self.array[i])):
-                if is_tile(self.array[i][j]): continue
-                column = [ self.array[k][j] for k in range(0, len(self.array)) ]
-                row = self.array[i]
+        for i in range(0, self.height):
+            for j in range(0, self.width):
+                if is_tile(self.at(i, j)): continue
+                column = [ self.at(k, j) for k in range(0, self.height) ]
+                row = self.tile_array[i*self.height:(i+1)*self.height]
                 u_idx, u_color = self.get_neighbor(reversed(column[:i]))
                 d_idx, d_color = self.get_neighbor(column[i+1:])
                 l_idx, l_color = self.get_neighbor(reversed(row[:j]))
@@ -170,7 +179,7 @@ class ColorTileArray(object):
                 d = None if d_idx is None else (d_color, ((i + d_idx, j), ))
                 l = None if l_idx is None else (l_color, ((i, j - l_idx), ))
                 r = None if r_idx is None else (r_color, ((i, j + r_idx), ))
-                tileplus = lambda x, y: [(x[0], x[1]+y[1])] if x[0] == y[0] else [x, y]
+                tileplus = lambda x, y: [(x[0], x[1] + y[1])] if x[0] == y[0] else [x, y]
                 tiles = filter(lambda a: len(a[1]) >= 2,
                                reduce(lambda a,b: a[:-1] + tileplus(a[-1], b) if len(a) > 0 else [b],
                                       sorted(filter(lambda x: x is not None, (u,d,l,r))), []))
@@ -178,7 +187,6 @@ class ColorTileArray(object):
         return moves
 
     def search_depth_first(self):
-        assert len(self.array) > 0, "Array is not filled"
         # If this state is not good, then return
         if not self.is_good_state(): return ()
         # Get legal moves, and return if there are no moves
@@ -188,8 +196,8 @@ class ColorTileArray(object):
         for move, tiles in moves:
             # Drop tiles in this move
             for color, d_pos in tiles:
-                for i in d_pos:
-                    self.array[i[0]][i[1]] = BG
+                for p in d_pos:
+                    self.assign(p[0], p[1], BG)
             # If there are no tiles, return move
             # Else recursively call search_depth_first()
             print " ".join(str(i) for i in self.count_all()), move, tiles
@@ -200,8 +208,8 @@ class ColorTileArray(object):
                 retval = (move,) + branch if len(branch) > 0 else ()
             # Restore dropped tiles
             for color, d_pos in tiles:
-                for i in d_pos:
-                    self.array[i[0]][i[1]] = color
+                for p in d_pos:
+                    self.assign(p[0], p[1], color)
             # Return move if this is valid route
             if len(retval) > 0:
                 return retval
