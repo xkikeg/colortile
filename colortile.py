@@ -100,7 +100,7 @@ class ColorTileArray(object):
         for i in range(0,im.size[1]/25):
             row = []
             for j in range(0,im.size[0]/25):
-                (r, g, b) = im.getpixel((j*25+12, i*25+12))
+                r, g, b = im.getpixel((j*25+12, i*25+12))[:3]
                 tile_color = get_tilecolor(r, g, b)
                 row.append(tile_color)
             array.append(row)
