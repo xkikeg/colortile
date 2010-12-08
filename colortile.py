@@ -110,8 +110,7 @@ class ColorTileArray(object):
         return "\n".join((" ".join(char_tilecolor(j) for j in i) for i in self.array))
 
     def count(self, color):
-        return sum(filter(lambda x: x == color,
-                          reduce(lambda a,b: a+b, self.array)))
+        return reduce(lambda a,b: a+b, self.array).count(color)
 
     def count_all(self):
         result = [0 for i in range(0, COLOR_MAX+1)]
