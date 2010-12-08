@@ -125,10 +125,26 @@ class ColorTileArray(object):
         result = self.count_all()
         return "\n".join("%s: %d" % (str_tilecolor(i), result[i]) for i in range(0, len(result)))
 
+    def position_all(self):
+        result = [[] for i in range(0, COLOR_MAX+1)]
+        for i, row in enumerate(self.array):
+            for j, cell in enumerate(row):
+                result[cell].append((i, j))
+        return result
+
 
     def is_good_state(self):
-        counts = self.count_all()[1:]
-        if len(filter(lambda x: x == 1, counts)) > 0: return False
+        positions = self.position_all()[1:]
+        # Bad state if there is the isolate tile
+        if 1 in map(lambda x: len(x), positions): return False
+        # Bad state if there are only three tiles with same color and cannot delete all
+        for poss in filter(lambda x: len(x) == 3, positions):
+            p1, p2, p3 = sorted(poss, key=lambda x: x[0])
+            if not p1[0] < p2[0] < p3[0] or not p1[1] == p3[1] != p2[1]:
+                return False
+            p1, p2, p3 = sorted(poss, key=lambda x: x[1])
+            if not p1[1] < p2[1] < p3[1] or not p1[0] == p3[0] != p2[0]:
+                return False
         return True
 
     def is_solved(self):
