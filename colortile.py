@@ -1,6 +1,7 @@
 import Image
 import sys
 
+WL = -1 # Wall
 BG = 0 # BackGround
 GY = 1 # GraY
 BL = 2 # BLue
@@ -16,6 +17,7 @@ MG = 10 # MaGenta
 COLOR_MAX = MG
 
 COLOR_TO_CHAR = {
+    WL: "#",
     BG: "-",
     GY: "g",
     BL: "B",
@@ -30,6 +32,7 @@ COLOR_TO_CHAR = {
     }
 
 COLOR_TO_STR = {
+    WL: "WL",
     BG: "BG",
     GY: "GY",
     BL: "BL",
@@ -47,12 +50,12 @@ COLOR_TO_STR = {
 def char_tilecolor(color):
     if color in COLOR_TO_CHAR:
         return COLOR_TO_CHAR[color]
-    else: return "#"
+    else: return "?"
 
 def str_tilecolor(color):
     if color in COLOR_TO_STR:
         return COLOR_TO_STR[color]
-    else: return "#"
+    else: return "??"
 
 def get_tilecolor(r, g, b):
     if r == g == b:
