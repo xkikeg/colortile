@@ -86,6 +86,9 @@ def get_tilecolor(r, g, b):
     else:
         return -1
 
+def is_tile(color):
+    return color > 0
+
 
 class ColorTileArray(object):
     def __init__(self):
