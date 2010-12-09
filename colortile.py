@@ -187,6 +187,17 @@ class ColorTileArray(object):
         return moves
 
     def search_depth_first(self):
+        self.search_tree = {}
+        self.search_root = tuple(self.tile_array)
+        self.search_tree[self.search_root] = []
+        return self._search_depth_first(self.search_root)
+
+    def _search_depth_first(self, parent):
+        # If this state is already searched, don't check.
+        self_key = tuple(self.tile_array)
+        if self_key in self.search_tree and self_key != self.search_root: return ()
+        self.search_tree[parent].append(self_key)
+        self.search_tree[self_key] = []
         # If this state is not good, then return
         if not self.is_good_state(): return ()
         # Get legal moves, and return if there are no moves
@@ -204,7 +215,7 @@ class ColorTileArray(object):
             if self.is_solved():
                 retval = (move,)
             else:
-                branch = self.search_depth_first()
+                branch = self._search_depth_first(self_key)
                 retval = (move,) + branch if len(branch) > 0 else ()
             # Restore dropped tiles
             for color, d_pos in tiles:
@@ -216,6 +227,12 @@ class ColorTileArray(object):
         # End of seaching all moves
         return ()
 
+    def output_tree_log(self):
+        return "\n".join("\n".join("%d -> %d;" % (id(parent), id(child))
+                                   for child in children)
+                         for parent, children in self.search_tree.iteritems()
+                         if len(children) > 0)
+
 
 if __name__=="__main__":
     x = ColorTileArray()
@@ -223,3 +240,4 @@ if __name__=="__main__":
     print x
     print x.str_count_all()
     print x.search_depth_first()
+    print x.output_tree_log()
