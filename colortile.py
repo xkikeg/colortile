@@ -1,3 +1,4 @@
+import os
 import sys
 import array
 
@@ -101,6 +102,16 @@ def is_tile(color):
 class ColorTileArray(object):
     def __init__(self):
         self.tile_array = None
+
+    def text_loader(self, filename):
+        tile_array = array.array('b')
+        file = open(filename, 'r')
+        for (i, line) in enumerate(file):
+            tile_array.extend(map(char_to_tilecolor, line.strip()))
+        self.height = i + 1
+        self.width = len(tile_array) / self.height
+        print self.height, self.width
+        self.tile_array = tile_array
 
     def fixed_image_loader(self, filename):
         tile_array = array.array('b')
@@ -240,7 +251,11 @@ class ColorTileArray(object):
 
 if __name__=="__main__":
     x = ColorTileArray()
-    x.fixed_image_loader(sys.argv[1])
+    filenameroot, ext = os.path.splitext(sys.argv[1])
+    if ext == ".png":
+        x.fixed_image_loader(filenameroot + ext)
+    else:
+        x.text_loader(filenameroot + ext)
     print x
     print x.str_count_all()
     print x.search_depth_first()
