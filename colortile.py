@@ -5,35 +5,36 @@ import Image
 
 CELL_SIZE = 25
 
-WL = -1 # Wall
-BG = 0 # BackGround
-GY = 1 # GraY
-BL = 2 # BLue
-CY = 3 # CYan
-GR = 4 # GReen
-YL = 5 # YeLlow
-BR = 6 # BRown
-OG = 7 # OranGe
-RD = 8 # ReD
-PK = 9 # PinK
-MG = 10 # MaGenta
+(WL , # Wall
+ BG , # BackGround
+ GY , # GraY
+ BL , # BLue
+ CY , # CYan
+ GR , # GReen
+ YL , # YeLlow
+ BR , # BRown
+ OG , # OranGe
+ RD , # ReD
+ PK , # PinK
+ MG , # MaGenta
+ ) = range(-1,11)
 
 COLOR_MAX = MG
 
-COLOR_TO_CHAR = {
-    WL: "#",
-    BG: "-",
-    GY: "g",
-    BL: "B",
-    CY: "c",
-    GR: "G",
-    YL: "y",
-    BR: "b",
-    OG: "o",
-    RD: "R",
-    PK: "p",
-    MG: "m"
-    }
+COLOR_TO_CHAR = (
+    "#", # WL
+    "-", # BG
+    "g", # GY
+    "B", # BL
+    "c", # CY
+    "G", # GR
+    "y", # YL
+    "b", # BR
+    "o", # OG
+    "R", # RD
+    "p", # PK
+    "m", # MG
+    )
 
 COLOR_TO_STR = {
     WL: "WL",
@@ -52,14 +53,17 @@ COLOR_TO_STR = {
 
 
 def char_tilecolor(color):
-    if color in COLOR_TO_CHAR:
-        return COLOR_TO_CHAR[color]
+    if -1 < color <= COLOR_MAX:
+        return COLOR_TO_CHAR[color+1]
     else: return "?"
 
 def str_tilecolor(color):
     if color in COLOR_TO_STR:
         return COLOR_TO_STR[color]
     else: return "??"
+
+def char_to_tilecolor(char):
+    return COLOR_TO_CHAR.index(char) - 1
 
 def get_tilecolor(r, g, b):
     if r == g == b:
