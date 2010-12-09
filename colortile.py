@@ -179,10 +179,10 @@ class ColorTileArray(object):
                 d = None if d_idx is None else (d_color, ((i + d_idx, j), ))
                 l = None if l_idx is None else (l_color, ((i, j - l_idx), ))
                 r = None if r_idx is None else (r_color, ((i, j + r_idx), ))
-                tileplus = lambda x, y: [(x[0], x[1] + y[1])] if x[0] == y[0] else [x, y]
+                tileplus = lambda x, y: ((x[0], x[1] + y[1]),) if x[0] == y[0] else (x, y)
                 tiles = filter(lambda a: len(a[1]) >= 2,
-                               reduce(lambda a,b: a[:-1] + tileplus(a[-1], b) if len(a) > 0 else [b],
-                                      sorted(filter(lambda x: x is not None, (u,d,l,r))), []))
+                               reduce(lambda a,b: a[:-1] + tileplus(a[-1], b) if len(a) > 0 else (b,),
+                                      sorted(filter(lambda x: x is not None, (u,d,l,r))), ()))
                 len(tiles) > 0 and moves.append(((i, j), tiles))
         return moves
 
