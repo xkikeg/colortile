@@ -126,7 +126,7 @@ class ColorTileArray(object):
         self.tile_array = tile_array
 
     def __str__(self):
-        return "\n".join((" ".join(char_tilecolor(self.at(i, j)) for j in range(0, self.width))) for i in range(0, self.height))
+        return "\n".join(("".join(char_tilecolor(self.at(i, j)) for j in range(0, self.width))) for i in range(0, self.height))
 
     def index_to_pos(self, index):
         return (index / self.width, index % self.width)
