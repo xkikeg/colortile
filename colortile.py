@@ -185,7 +185,7 @@ class ColorTileArray(object):
             for j in range(0, self.width):
                 if is_tile(self.at(i, j)): continue
                 column = [ self.at(k, j) for k in range(0, self.height) ]
-                row = self.tile_array[i*self.height:(i+1)*self.height]
+                row = self.tile_array[i*self.width:(i+1)*self.width]
                 u_idx, u_color = self.get_neighbor(reversed(column[:i]))
                 d_idx, d_color = self.get_neighbor(column[i+1:])
                 l_idx, l_color = self.get_neighbor(reversed(row[:j]))
